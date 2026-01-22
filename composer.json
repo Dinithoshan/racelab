@@ -1,0 +1,31 @@
+{
+    "name": "dinithoshan/racelab",
+    "version": "0.1.0",
+    "type": "library",
+    "license": "MIT",
+    "description": "A Laravel package for debugging and profiling with timeline events",
+    "keywords": ["laravel", "debugging", "profiling", "timeline"],
+    "autoload": {
+        "psr-4": {
+            "Dinithoshan\\Racelab\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dinithoshan",
+            "email": "dinithoshan2@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^9.0|^10.0|^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dinithoshan\\Racelab\\RacelabServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "beta"
+}

@@ -1,0 +1,25 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Build artifacts
+/dist/
+
+# Package manager lock files
+package-lock.json
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
