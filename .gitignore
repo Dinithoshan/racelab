@@ -2,9 +2,6 @@
 /node_modules/
 /vendor/
 
-# Build artifacts
-/dist/
-
 # Package manager lock files
 package-lock.json
 
