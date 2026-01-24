@@ -17,20 +17,9 @@ class RacelabServiceProvider extends ServiceProvider
     {
         // load the views
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'racelab');
-
-        // publish the config
-        $this->publishes([
-            __DIR__ . '/../config/racelab.php' => config_path('racelab.php'),
-        ], 'racelab-config');
-
-        // Publish prebuilt assets (dist) to the host public directory when requested
-        $this->publishes([
-            __DIR__ . '/../dist' => public_path('vendor/racelab'),
-        ], 'racelab-assets');
-
+        
         // bootstrap the internals
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
             $this->commands([
                 InstallCommand::class,
                 FlushDbCommand::class,

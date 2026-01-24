@@ -39,6 +39,8 @@ class TimelineEventStore
                 'function' => $entry['function'] ?? null,
                 'is_vendor' => (bool) ($entry['is_vendor'] ?? false),
                 'payload' => self::encodePayload($entry),
+                'parent_event_id' => null,
+                'trace_summary' => self::encodeTraceSummary($entry),
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -59,7 +61,8 @@ class TimelineEventStore
                     'bindings' => $entry['bindings'] ?? [],
                     'time_ms' => $entry['time_ms'] ?? null,
                     'connection' => $entry['connection'] ?? null,
-                    'origin' => $entry['origin'] ?? null,  // Include origin analysis
+                    'origin' => $entry['origin'] ?? null,  // Include origin analysis for backward compatibility
+                    'stack_trace' => $entry['stack_trace'] ?? [],  // Full stack trace
                 ];
                 break;
 
@@ -130,6 +133,21 @@ class TimelineEventStore
         }
 
         $encoded = json_encode($payload);
+
+        return $encoded === false ? null : $encoded;
+    }
+
+    /**
+     * Encode trace summary for storage in trace_summary column
+     */
+    protected static function encodeTraceSummary(array $entry): ?string
+    {
+        if ($entry['type'] !== 'query' || empty($entry['trace_summary'])) {
+            return null;
+        }
+
+        $summary = $entry['trace_summary'];
+        $encoded = json_encode($summary);
 
         return $encoded === false ? null : $encoded;
     }

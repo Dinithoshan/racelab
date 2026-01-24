@@ -4,6 +4,7 @@ export default function TimelineViewer({ requests }) {
     const [expandedRequests, setExpandedRequests] = useState(new Set());
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [copiedEventId, setCopiedEventId] = useState(null);
+    const [showFullTrace, setShowFullTrace] = useState(new Set());
 
     const toggleRequest = (requestId) => {
         const newExpanded = new Set(expandedRequests);
@@ -90,6 +91,115 @@ export default function TimelineViewer({ requests }) {
         }
     };
 
+    const toggleFullTrace = (eventId) => {
+        const newSet = new Set(showFullTrace);
+        if (newSet.has(eventId)) {
+            newSet.delete(eventId);
+        } else {
+            newSet.add(eventId);
+        }
+        setShowFullTrace(newSet);
+    };
+
+    const renderTraceSummary = (traceSummary) => {
+        if (!traceSummary) return null;
+
+        const { file, line, class: className, function: functionName, description, short_path, source } = traceSummary;
+
+        const sourceColors = {
+            'application': 'bg-green-50 text-green-900 border-green-300',
+            'vendor': 'bg-yellow-50 text-yellow-900 border-yellow-300',
+            'framework': 'bg-orange-50 text-orange-900 border-orange-300',
+            'unknown': 'bg-gray-50 text-gray-900 border-gray-300',
+        };
+
+        const sourceLabels = {
+            'application': 'Application Code',
+            'vendor': 'Third-party Package',
+            'framework': 'Laravel Framework',
+            'unknown': 'Unknown',
+        };
+
+        return (
+            <div className="mb-3 mt-1 space-y-2">
+                <div className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md border ${sourceColors[source] || sourceColors.unknown}`}>
+                    <span className="font-semibold">📍 Query Origin:</span>
+                    <span className="ml-2 font-mono">
+                        {short_path || file?.split('/').pop() || 'Unknown'}:{line}
+                    </span>
+                </div>
+                {description && (
+                    <div className="text-xs text-gray-700 ml-1 font-mono bg-gray-50 p-2 rounded border border-gray-200">
+                        {description}
+                    </div>
+                )}
+                <div className="text-xs text-gray-500 ml-1">
+                    Source: {sourceLabels[source] || 'Unknown'}
+                </div>
+            </div>
+        );
+    };
+
+    const renderFullTrace = (stackTrace, eventId) => {
+        if (!stackTrace || !Array.isArray(stackTrace) || stackTrace.length === 0) {
+            return null;
+        }
+
+        const isShowing = showFullTrace.has(eventId);
+
+        return (
+            <div className="mt-3">
+                <button
+                    onClick={() => toggleFullTrace(eventId)}
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium mb-2"
+                >
+                    {isShowing ? '▼ Hide' : '▶ Show'} Full Stack Trace ({stackTrace.length} frames)
+                </button>
+                {isShowing && (
+                    <div className="bg-gray-900 text-gray-100 p-3 rounded border border-gray-700 max-h-96 overflow-y-auto">
+                        <div className="space-y-1 font-mono text-xs">
+                            {stackTrace.map((frame, index) => {
+                                const { file, line, class: className, function: functionName, source, short_path } = frame;
+                                const isApplication = source === 'application';
+                                
+                                return (
+                                    <div 
+                                        key={index}
+                                        className={`p-2 rounded ${isApplication ? 'bg-green-900/30 border border-green-700' : 'bg-gray-800'}`}
+                                    >
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-gray-400 text-xs w-8 flex-shrink-0">#{index}</span>
+                                            <div className="flex-1">
+                                                {className && functionName ? (
+                                                    <div className="text-blue-300">
+                                                        {className}::{functionName}()
+                                                    </div>
+                                                ) : functionName ? (
+                                                    <div className="text-blue-300">{functionName}()</div>
+                                                ) : null}
+                                                {file && (
+                                                    <div className="text-gray-300 mt-1">
+                                                        {short_path || file}
+                                                        {line && <span className="text-yellow-300">:{line}</span>}
+                                                    </div>
+                                                )}
+                                                {source && (
+                                                    <div className="text-gray-500 text-xs mt-1">
+                                                        [{source}]
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     const renderQueryOrigin = (origin) => {
         if (!origin) return null;
 
@@ -141,8 +251,11 @@ export default function TimelineViewer({ requests }) {
 
         return (
             <div className="mt-2 text-xs space-y-1">
-                {/* Show query origin prominently for query events */}
-                {isQuery && event.decoded_payload?.origin && renderQueryOrigin(event.decoded_payload.origin)}
+                {/* Show trace summary prominently for query events (from our engine) */}
+                {isQuery && event.decoded_trace_summary && renderTraceSummary(event.decoded_trace_summary)}
+                
+                {/* Show query origin for backward compatibility */}
+                {isQuery && event.decoded_payload?.origin && !event.decoded_trace_summary && renderQueryOrigin(event.decoded_payload.origin)}
                 
                 {event.file && (
                     <div className="text-gray-600">
@@ -190,6 +303,9 @@ export default function TimelineViewer({ requests }) {
                         )}
                     </div>
                 )}
+                
+                {/* Show full stack trace for query events */}
+                {isQuery && event.decoded_payload?.stack_trace && renderFullTrace(event.decoded_payload.stack_trace, event.id)}
             </div>
         );
     };

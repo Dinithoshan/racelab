@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Dinithoshan\Racelab\Context\RequestContext;
 use Dinithoshan\Racelab\Collectors\EventCollector;
+use Dinithoshan\Racelab\Analyzers\InternalAnalyzer;
 
 /**
  * Middleware that captures HTTP request/response boundaries and initializes request context.
@@ -16,6 +17,11 @@ class RacelabMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (! config('racelab.enabled')) {
+            return $next($request);
+        }
+
+        // Skip logging for Racelab package routes
+        if (InternalAnalyzer::shouldExcludeRequest($request)) {
             return $next($request);
         }
 
