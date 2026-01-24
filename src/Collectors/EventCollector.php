@@ -47,14 +47,16 @@ class EventCollector
     }
 
     /**
-     * Record a database query event
+     * Record a database query event with stack trace
      */
     public static function recordQuery(
         string $sql, 
         array $bindings, 
         float $timeMs, 
         string $connection,
-        array $origin = []
+        array $origin = [],
+        array $fullTrace = [],
+        ?array $traceSummary = null
     ): void
     {
         self::record('query', [
@@ -63,6 +65,8 @@ class EventCollector
             'time_ms' => $timeMs,
             'connection' => $connection,
             'origin' => $origin,
+            'stack_trace' => $fullTrace,
+            'trace_summary' => $traceSummary,
         ]);
     }
 

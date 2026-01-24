@@ -71,26 +71,8 @@ Now you can see **exactly** which code path led to each query!
 composer require dinithoshan/racelab --dev
 ```
 
-### 2. Publish Assets and Config
-
 ```bash
 php artisan vendor:publish --provider="Dinithoshan\Racelab\RacelabServiceProvider"
-```
-
-Or publish individually:
-
-```bash
-# Publish configuration
-php artisan vendor:publish --tag=racelab-config
-
-# Publish frontend assets
-php artisan vendor:publish --tag=racelab-assets
-```
-
-### 3. Run Migrations
-
-```bash
-php artisan migrate
 ```
 
 This creates the `racelab_timeline_events` table in a separate SQLite database.
@@ -334,9 +316,10 @@ Click an event to see full details including stack traces and payloads.
 
 ### Frontend Not Loading
 
-1. Publish assets: `php artisan vendor:publish --tag=racelab-assets --force`
-2. Check public directory: `ls -la public/vendor/racelab/`
+1. Assets are served automatically from the package - no publishing needed
+2. Check that routes are loaded: `php artisan route:list | grep racelab`
 3. Check browser console for errors
+4. Verify package dist folder exists: `vendor/dinithoshan/racelab/dist/`
 
 See `IMPLEMENTATION_GUIDE.md` for more troubleshooting tips.
 

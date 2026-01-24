@@ -22,11 +22,17 @@ class TimeLineController extends Controller
             $firstEvent = $requestEvents->first();
             $lastEvent = $requestEvents->last();
             
-            // Decode payloads
+            // Decode payloads and trace summaries
             $events = $requestEvents->map(function ($event) {
                 if ($event->payload) {
                     $event->decoded_payload = json_decode($event->payload, true);
                 }
+                
+                // Decode trace summary if present
+                if ($event->trace_summary) {
+                    $event->decoded_trace_summary = json_decode($event->trace_summary, true);
+                }
+                
                 return $event;
             });
 
