@@ -43,13 +43,6 @@ final class TickProfiler
         }
     }
 
-
-
-
-
-
-
-
     /**
      * Get a snapshot of the buffer without clearing it.
      * Returns frames leading up to the current point in time.

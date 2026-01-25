@@ -23,7 +23,7 @@ Cache operations and queue jobs
 Complete execution flow from start to finish  
 Beautiful timeline UI showing everything in context  
 
-Now you can see **exactly** which code path led to each query!
+Now you can see **exactly** which line of code led to each query!
 
 ## Features
 
@@ -68,16 +68,18 @@ Now you can see **exactly** which code path led to each query!
 ### 1. Require the Package
 
 ```bash
-composer require dinithoshan/racelab --dev
+composer require dinithoshan/racelab @dev
 ```
+
+This creates the `racelab_timeline_events` table in a separate SQLite database in the repositories storage path so its automatically gitignored.
+
+### 4. Configure (Optional)
+
+Publish the config file if needed:
 
 ```bash
 php artisan vendor:publish --provider="Dinithoshan\Racelab\RacelabServiceProvider"
 ```
-
-This creates the `racelab_timeline_events` table in a separate SQLite database.
-
-### 4. Configure (Optional)
 
 Edit `config/racelab.php` to customize settings:
 
@@ -87,11 +89,18 @@ return [
     'tick_capacity' => env('RACELAB_TICK_CAPACITY', 10000),
     'capture_http_boundaries' => true,
     'capture_headers' => false,
-    // ... more options
 ];
 ```
 
-### 5. Access the Dashboard
+### 5. Install Racelab
+
+```bash
+php artisan racelab:install
+```
+
+This runs the migrations which is a seperate sqlite database connection so that dev dependancy would not change you schema unnecesarily.
+
+### 6. Access the Dashboard
 
 Visit `http://your-app.test/racelab` to see the timeline!
 
@@ -165,22 +174,6 @@ Or via command line:
 ```bash
 php artisan racelab:flush
 ```
-
-#### Custom Events
-
-Record custom events in your code:
-
-```php
-use Dinithoshan\Racelab\Collectors\EventCollector;
-
-EventCollector::record('custom_event', [
-    'action' => 'user_login',
-    'user_id' => $user->id,
-    'ip' => request()->ip(),
-]);
-```
-
-See `IMPLEMENTATION_GUIDE.md` for more details on custom events.
 
 ## Configuration
 
@@ -299,43 +292,12 @@ Expand a request to see all events in chronological order.
 ### Event Details
 Click an event to see full details including stack traces and payloads.
 
-## Troubleshooting
-
-### No Events Showing
-
-1. Check configuration: `php artisan tinker` → `config('racelab.enabled')`
-2. Check database: `storage/app/racelab_timeline.sqlite` exists
-3. Check migrations: `php artisan migrate:status`
-4. Check logs: `tail -f storage/logs/laravel.log`
-
-### Performance Too Slow
-
-1. Reduce tick capacity: `RACELAB_TICK_CAPACITY=5000`
-2. Disable tick profiler: `RACELAB_TICK_CAPACITY=0`
-3. Disable HTTP capture: `RACELAB_CAPTURE_HTTP=false`
-
-### Frontend Not Loading
-
-1. Assets are served automatically from the package - no publishing needed
-2. Check that routes are loaded: `php artisan route:list | grep racelab`
-3. Check browser console for errors
-4. Verify package dist folder exists: `vendor/dinithoshan/racelab/dist/`
-
-See `IMPLEMENTATION_GUIDE.md` for more troubleshooting tips.
-
-## Documentation
-
-- **`README.md`** (this file) - Overview and quick start
-- **`ARCHITECTURE.md`** - Detailed technical architecture
-- **`IMPLEMENTATION_GUIDE.md`** - Step-by-step setup and usage
-- **`CHANGES.md`** - Complete list of changes and migration guide
 
 ## Requirements
 
 - **PHP**: 8.1 or higher
 - **Laravel**: 10.x or 11.x
 - **SQLite**: For timeline database
-- **Node.js**: For building frontend assets (if modifying)
 
 ## Contributing
 

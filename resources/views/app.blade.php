@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ route('racelab.assets', ['file' => 'app.css']) }}">
     <title>RaceLab</title>
 </head>
-<body>
+<body class="bg-[#1a202c]">
     <div id="react-app"></div>
 
     <!-- Include compiled Racelab JS (served directly from package dist folder) -->

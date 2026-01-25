@@ -33,6 +33,9 @@ class TimeLineController extends Controller
                     $event->decoded_trace_summary = json_decode($event->trace_summary, true);
                 }
                 
+                // Add label property for display
+                $event->label = $this->getEventLabel($event->type);
+                
                 return $event;
             });
 
@@ -84,5 +87,21 @@ class TimeLineController extends Controller
             'success' => true,
             'message' => 'Entries have been flushed successfully'
         ]);
+    }
+
+    /**
+     * Get a human-readable label for an event type
+     *
+     * @param string $type
+     * @return string
+     */
+    private function getEventLabel(string $type): string
+    {
+        return match ($type) {
+            'http_response' => 'HTTP Response',
+            'http_request' => 'HTTP Request',
+            'query' => 'Query',
+            default => ucfirst(str_replace('_', ' ', $type)),
+        };
     }
 }

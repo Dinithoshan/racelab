@@ -22,6 +22,13 @@ class InternalAnalyzer
     ];
 
     /**
+     * Well known routes that need to be excluded
+     */
+    protected static array $excludedRoutes = [
+        '/.well-known/appspecific/com.chrome.devtools.json' => ['GET']
+    ];
+
+    /**
      * Check if a request is for a Racelab package route
      */
     public static function isRacelabRoute(Request $request): bool
@@ -38,6 +45,28 @@ class InternalAnalyzer
 
         // Pattern matches (routes that start with a prefix)
         foreach (self::$racelabRoutes as $route => $allowedMethods) {
+            if (str_ends_with($route, '/') && str_starts_with($path, $route)) {
+                return in_array($method, $allowedMethods, true);
+            }
+        }
+
+        return false;
+    }
+    /**
+     * Check if a request is from a well known excluded route.
+     */
+    public static function isWellKnownExcludedRoute(Request $request): bool
+    {
+        $uri = $request->getRequestUri();
+        $path = parse_url($uri, PHP_URL_PATH) ?: $uri;
+        $method = $request->method();
+
+        if (isset(self::$excludedRoutes[$path])) {
+            $allowedMethods = self::$excludedRoutes[$path];
+            return in_array($method, $allowedMethods, true);
+        }
+
+        foreach (self::$excludedRoutes as $route => $allowedMethods) {
             if (str_ends_with($route, '/') && str_starts_with($path, $route)) {
                 return in_array($method, $allowedMethods, true);
             }
@@ -103,6 +132,6 @@ class InternalAnalyzer
      */
     public static function shouldExcludeRequest(Request $request): bool
     {
-        return self::isRacelabRoute($request);
+        return (self::isRacelabRoute($request) || self::isWellKnownExcludedRoute($request));
     }
 }

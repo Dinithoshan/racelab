@@ -15,6 +15,11 @@ class RacelabServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        // Only run in local environment to prevent accidental production usage
+        if (! $this->app->environment('local')) {
+            return;
+        }
+
         // load the views
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'racelab');
         
@@ -61,6 +66,11 @@ class RacelabServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        // Only run in local environment to prevent accidental production usage
+        if (! $this->app->environment('local')) {
+            return;
+        }
+
         $this->mergeConfigFrom(__DIR__ . '/../config/racelab.php', 'racelab');
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 
