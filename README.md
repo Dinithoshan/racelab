@@ -68,12 +68,12 @@ Now you can see **exactly** which line of code led to each query!
 ### 1. Require the Package
 
 ```bash
-composer require dinithoshan/racelab @dev
+composer require dinithoshan/racelab --dev
 ```
 
 This creates the `racelab_timeline_events` table in a separate SQLite database in the repositories storage path so its automatically gitignored.
 
-### 4. Configure (Optional)
+### 2. Configure (Optional)
 
 Publish the config file if needed:
 
@@ -92,7 +92,7 @@ return [
 ];
 ```
 
-### 5. Install Racelab
+### 3. Install Racelab
 
 ```bash
 php artisan racelab:install
@@ -100,7 +100,7 @@ php artisan racelab:install
 
 This runs the migrations which is a seperate sqlite database connection so that dev dependancy would not change you schema unnecesarily.
 
-### 6. Access the Dashboard
+### 4. Access the Dashboard
 
 Visit `http://your-app.test/racelab` to see the timeline!
 
@@ -323,14 +323,10 @@ Always ensure:
 RACELAB_ENABLED=false
 ```
 
-## Credits
-
-Created to solve the problem of tracking database query origins in Laravel applications.
-
 ## Support
 
 For issues, questions, or feature requests, see the documentation files or create an issue.
 
 ---
 
-**Happy Debugging!** 🏁
+**Happy Debugging!**
