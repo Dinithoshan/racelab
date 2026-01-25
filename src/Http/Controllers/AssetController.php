@@ -32,7 +32,9 @@ class AssetController extends Controller
 
         return Response::make($content, 200, [
             'Content-Type' => $contentType,
-            'Cache-Control' => 'public, max-age=31536000', // Cache for 1 year
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0', // Hot serve - prevent all caching
+            'Pragma' => 'no-cache', // HTTP/1.0 compatibility
+            'Expires' => '0', // Ensure old browsers don't cache
         ]);
     }
 }

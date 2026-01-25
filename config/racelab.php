@@ -27,7 +27,7 @@ return [
     'capture_http_boundaries' => env('RACELAB_CAPTURE_HTTP', true),
 
     /**
-     * Capture HTTP headers (can be verbose)
+     * Capture HTTP headers
      */
     'capture_headers' => env('RACELAB_CAPTURE_HEADERS', false),
 
