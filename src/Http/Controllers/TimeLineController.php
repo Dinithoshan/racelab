@@ -58,10 +58,24 @@ class TimeLineController extends Controller
             ];
         })->values();
 
+        // Get the default database connection driver for SQL formatting
+        $defaultConnection = config('database.default');
+        $dbDriver = config("database.connections.{$defaultConnection}.driver", 'mysql');
+        
+        // Map Laravel drivers to sql-formatter dialects
+        $sqlDialect = match($dbDriver) {
+            'mysql', 'mariadb' => 'mysql',
+            'pgsql', 'postgres' => 'postgresql',
+            'sqlite' => 'sqlite',
+            'sqlsrv', 'mssql' => 'sql',
+            default => 'sql', // fallback to generic SQL
+        };
+
         return response()->json([
             'success' => true,
             'data' => $grouped,
             'total_requests' => $grouped->count(),
+            'db_dialect' => $sqlDialect,
         ]);
     }
 

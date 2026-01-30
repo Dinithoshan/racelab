@@ -12,7 +12,8 @@ export default function EventDetails({
     copiedEventId, 
     onCopyQuery,
     showFullTrace,
-    onToggleFullTrace 
+    onToggleFullTrace,
+    dbDialect = 'mysql' 
 }) {
     if (!event.decoded_payload && !event.file) {
         return null;
@@ -75,7 +76,7 @@ export default function EventDetails({
                     {isQuery && payload.sql ? (
                         <>
                             <pre className="whitespace-pre-wrap break-all text-xs font-mono text-[#e2e8f0] select-all w-full">
-                                {formatSqlQuery(payload)}
+                                {formatSqlQuery(payload, dbDialect)}
                             </pre>
                             {payload.time_ms && (
                                 <div className="mt-2 pt-2 border-t border-[#4a5568] text-[#cbd5e0]">

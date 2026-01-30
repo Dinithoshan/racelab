@@ -14,7 +14,8 @@ export default function EventItem({
     copiedEventId,
     onCopyQuery,
     showFullTrace,
-    onToggleFullTrace
+    onToggleFullTrace,
+    dbDialect
 }) {
     return (
         <div 
@@ -41,6 +42,7 @@ export default function EventItem({
                             onCopyQuery={onCopyQuery}
                             showFullTrace={showFullTrace}
                             onToggleFullTrace={onToggleFullTrace}
+                            dbDialect={dbDialect}
                         />
                     )}
                 </div>

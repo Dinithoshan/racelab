@@ -14,7 +14,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "sql-formatter": "^15.1.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.2",
