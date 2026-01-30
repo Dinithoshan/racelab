@@ -5,11 +5,11 @@ import { useCopyQuery } from './hooks/useCopyQuery';
 /**
  * Main component for displaying timeline requests and events
  */
-export default function TimelineViewer({ requests }) {
+export default function TimelineViewer({ requests, dbDialect }) {
     const [expandedRequests, setExpandedRequests] = useState(new Set());
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showFullTrace, setShowFullTrace] = useState(new Set());
-    const { copiedEventId, copyQueryToClipboard } = useCopyQuery();
+    const { copiedEventId, copyQueryToClipboard } = useCopyQuery(dbDialect);
 
     const toggleRequest = (requestId) => {
         const newExpanded = new Set(expandedRequests);
@@ -58,6 +58,7 @@ export default function TimelineViewer({ requests }) {
                     onCopyQuery={copyQueryToClipboard}
                     showFullTrace={showFullTrace}
                     onToggleFullTrace={toggleFullTrace}
+                    dbDialect={dbDialect}
                 />
             ))}
         </div>

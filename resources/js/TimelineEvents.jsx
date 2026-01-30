@@ -7,6 +7,7 @@ export default function TimelineEvents() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState(null);
     const [autoRefresh, setAutoRefresh] = useState(false);
+    const [dbDialect, setDbDialect] = useState('mysql'); // Default to mysql
 
     const fetchEvents = () => {
         fetch('/api/racelabtimelineevents')
@@ -16,6 +17,10 @@ export default function TimelineEvents() {
                 setStats({
                     total_requests: data.total_requests || 0,
                 });
+                // Store the database dialect for SQL formatting
+                if (data.db_dialect) {
+                    setDbDialect(data.db_dialect);
+                }
                 setLoading(false);
             })
             .catch((error) => {
@@ -116,7 +121,7 @@ export default function TimelineEvents() {
                 </div>
 
                 {/* Timeline */}
-                <TimelineViewer requests={requests} />
+                <TimelineViewer requests={requests} dbDialect={dbDialect} />
             </div>
         </div>
     );

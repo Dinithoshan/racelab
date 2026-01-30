@@ -15,7 +15,8 @@ export default function RequestCard({
     copiedEventId,
     onCopyQuery,
     showFullTrace,
-    onToggleFullTrace
+    onToggleFullTrace,
+    dbDialect
 }) {
     return (
         <div 
@@ -97,6 +98,7 @@ export default function RequestCard({
                             onCopyQuery={onCopyQuery}
                             showFullTrace={showFullTrace}
                             onToggleFullTrace={onToggleFullTrace}
+                            dbDialect={dbDialect}
                         />
                     ))}
                 </div>

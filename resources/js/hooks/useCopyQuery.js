@@ -4,7 +4,7 @@ import { formatSqlQuery } from '../utils/formatting';
 /**
  * Custom hook for handling query copying to clipboard
  */
-export function useCopyQuery() {
+export function useCopyQuery(dbDialect = 'mysql') {
     const [copiedEventId, setCopiedEventId] = useState(null);
 
     const copyQueryToClipboard = async (event, e) => {
@@ -12,7 +12,7 @@ export function useCopyQuery() {
         
         if (event.type !== 'query' || !event.decoded_payload) return;
         
-        const formattedQuery = formatSqlQuery(event.decoded_payload);
+        const formattedQuery = formatSqlQuery(event.decoded_payload, dbDialect);
         if (!formattedQuery) return;
         
         try {
