@@ -34,25 +34,26 @@ export default function RequestCard({
                             {isExpanded ? '▼' : '▶'}
                         </span>
                         <div>
-                            <div className="font-mono text-sm text-[#cbd5e0]">
-                                {(() => {
-                                    // Extract path from http_request event if available
-                                    const httpRequestEvent = request.events?.find(e => e.type === 'http_request');
-                                    if (httpRequestEvent?.decoded_payload?.uri) {
-                                        const uri = httpRequestEvent.decoded_payload.uri;
-                                        // If it's already a path (starts with /), use it directly
-                                        if (uri.startsWith('/')) {
-                                            return uri;
-                                        }
-                                        // Otherwise, try to extract pathname from full URL
-                                        try {
-                                            return new URL(uri).pathname;
-                                        } catch {
-                                            return uri;
-                                        }
-                                    }
-                                    return request.request_id;
-                                })()}
+                        <div className="font-mono text-sm">
+                            {(() => {
+                                const httpRequestEvent = request.events?.find(e => e.type === 'http_request');
+                                if (!httpRequestEvent?.decoded_payload?.uri) {
+                                    return <span className="text-[#cbd5e0]">{request.request_id}</span>;
+                                }
+
+                                const { method, path } = getRequestInfo(httpRequestEvent);
+                                return (
+                                    <div className="flex items-center gap-2">
+                                        <MethodBadge method={method} />
+                                        <span
+                                            className="text-[#cbd5e0] truncate"
+                                            title={path}
+                                        >
+                                            {path}
+                                        </span>
+                                    </div>
+                                );
+                            })()}
                             </div>
                             <div className="text-xs text-[#a0aec0] mt-1">
                                 Started: {formatTimestamp(request.started_at)}
@@ -104,5 +105,47 @@ export default function RequestCard({
                 </div>
             )}
         </div>
+    );
+}
+
+//helper function to get the request method and path from the http request event
+function getRequestInfo(httpRequestEvent) {
+
+    const { uri, method = 'GET' } = httpRequestEvent.decoded_payload;
+
+    let path = uri;
+    if (uri.startsWith('/')) {
+        path = uri;
+    }
+
+    try {
+        path = new URL(uri).pathname;
+    } catch {
+        path = uri;
+    }
+
+    return { method, path };
+}
+
+
+function MethodBadge({ method }) {
+    const styles = {
+        GET: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+        POST: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        PUT: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        PATCH: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+        DELETE: 'bg-red-500/20 text-red-400 border-red-500/30',
+    };
+
+    const className =
+        styles[method] ??
+        'bg-gray-500/20 text-gray-400 border-gray-500/30';
+
+    return (
+        <span
+            className={`px-2 py-0.5 rounded-md border text-xs font-semibold tracking-wide ${className}`}
+        >
+            {method}
+        </span>
     );
 }
