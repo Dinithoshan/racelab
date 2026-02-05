@@ -13,7 +13,7 @@ class TimeLineController extends Controller
     {
         $entries = DB::connection(TimelineConfig::connection())
             ->table(TimelineConfig::table())
-            ->orderBy('occurred_at', 'desc')
+            ->orderBy('occurred_at', 'asc')
             ->limit(1000) // Limit to prevent overwhelming the UI
             ->get();
 
