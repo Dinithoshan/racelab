@@ -13,12 +13,13 @@ class TimeLineController extends Controller
     {
         $entries = DB::connection(TimelineConfig::connection())
             ->table(TimelineConfig::table())
-            ->orderBy('occurred_at', 'asc')
+            ->orderBy('occurred_at', 'desc')
             ->limit(1000) // Limit to prevent overwhelming the UI
             ->get();
 
         // Group entries by request_id for hierarchical view
         $grouped = $entries->groupBy('request_id')->map(function ($requestEvents) {
+            $requestEvents = $requestEvents->sortBy('occurred_at')->values();
             $firstEvent = $requestEvents->first();
             $lastEvent = $requestEvents->last();
             

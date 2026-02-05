@@ -303,6 +303,10 @@ Click an event to see full details including stack traces and payloads.
 
 This is a personal development package, but suggestions and issues are welcome!
 
+## Plans
+ - Record Cache hits, Cache Reads and Cache Deletes.
+ - Record Request bodies and Response Bodies.
+ 
 ## License
 
 MIT License - use freely in your Laravel projects.
